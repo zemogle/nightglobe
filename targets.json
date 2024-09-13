@@ -1,0 +1,46 @@
+{
+    "targets": [
+  {
+    "name": "NGC7000",
+    "ra": 314.6958,
+    "dec": 44.33,
+    "desc": "NGC7000, known as the North America nebula, is an emission nebula in the constellation Cygnus, 1,600 light years away, close to Deneb. The remarkable shape of the nebula resembles that of the continent of North America, complete with a prominent Gulf of Mexico.",
+    "filters": [
+      { "exposure": 180.0, "name": "rp" },
+      { "exposure": 180.0, "name": "V" },
+      { "exposure": 180.0, "name": "B" }
+    ],
+    "avmdesc": "HII (ionized) region",
+    "avmcode": "4.2.1.1"
+  },
+  {
+    "name": "NGC7023",
+    "ra": 315.40375,
+    "dec": 68.1633306,
+    "desc": "NGC 7023 is actually the cluster within the nebula known as the Iris Nebula and Caldwell 4 - a bright reflection nebula in the constellation Cepheus 1,300 light years away.",
+    "filters": [
+      { "exposure": 120.0, "name": "rp" },
+      { "exposure": 120.0, "name": "V" },
+      { "exposure": 120.0, "name": "B" }
+    ],
+    "avmdesc": "Bright Nebula",
+    "avmcode": "4.2.1;3.6.4.1"
+  },
+  {
+    "name": "UGCA91",
+    "ra": 66.18375,
+    "dec": -21.1836111,
+    "desc": "UGCA91 is a globular cluster lying 294,000 light years away, making it one of the most distant globular clusters around the Milky Way.",
+    "filters": [
+      { "exposure": 240.0, "name": "rp" },
+      { "exposure": 240.0, "name": "V" },
+      { "exposure": 240.0, "name": "B" }
+    ],
+    "avmdesc": "Globular Cluster",
+    "avmcode": "3.6.4.2"
+  }
+],
+"site": "",
+"datetime": "2024-09-12T14:13:01",
+"count": 17
+}
