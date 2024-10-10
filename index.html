@@ -42,7 +42,13 @@
 
         const icons = {
                 galaxy: {
-                icon: "galaxy.png",
+                icon: "icons/galaxy_b.png",
+                },
+                nebula: {
+                icon: "icons/nebula_r.png",
+                },
+                cluster: {
+                icon: "icons/cluster_y.png",
                 },
             };
 
@@ -65,11 +71,18 @@
         }
 
         function setMarkers(time) {
+            let target;
+            let objtype;
             for (const celestialtarget of targets) {   
                 const coords = correctCoords(celestialtarget.ra, celestialtarget.dec, time)
-                let target = {
+                celestialtarget.avmcode.startsWith('5.1') ? objtype = "galaxy" : objtype = "nebula";
+                if (celestialtarget.avmcode.startsWith('3.6') == true) objtype = "cluster";
+                target = {
                     position: { lng: coords.lng, lat: coords.lat },
-                    type: "galaxy",
+                    type: objtype,
+                    name: celestialtarget.name,
+                    desc: celestialtarget.desc,
+                    icon: icons[objtype].icon,
                 };
                 addMarker(target)
                 }
@@ -83,7 +96,7 @@
                 position: target.position,
                 content: iconImage,
                 gmpClickable: true,
-                title: `${target.title}`,
+                title: `${target.name}`,
             });
             markers.push(marker);
             marker.addListener("click", ({ domEvent, latLng }) => {
@@ -93,7 +106,24 @@
                 infowindow.open(marker.map, marker);
                 });
         }
-    
+
+        function buildContent(property) {
+            const content = document.createElement("div");
+
+            content.classList.add("property");
+            content.innerHTML = `
+                <div class="icon">
+                    ${property.icon}
+                </div>
+                <div class="details">
+                    <div class="name">${property.name}</div>
+                    <div class="desc">${property.desc}</div>
+                    <div class="type">${property.type}</div>
+                </div>
+                `;
+            return content;
+            }
+
         // Sets the map on all markers in the array.
         function setMapOnAll(map) {
         for (let i = 0; i < markers.length; i++) {
