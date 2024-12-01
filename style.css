@@ -1,0 +1,106 @@
+:root {
+    --building-color: #FF9800;
+    --house-color: #0288D1;
+    --shop-color: #7B1FA2;
+    --warehouse-color: #558B2F;
+  }
+  
+  /*
+   * Optional: Makes the sample page fill the window.
+   */
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Optional: Makes the map fill the window. */
+  /*
+   * Always set the map height explicitly to define the size of the div element
+   * that contains the map.
+   *
+  #map {
+    height: 100%;
+    width: 100%;
+  } */
+  
+  /*
+   * Property styles in unhighlighted state.
+   */
+
+   #map { 
+    height:600px; 
+    width: 1200px; 
+    position:relative; 
+    }
+
+    input {
+        width: 100%;
+    }
+    datalist {
+        display: flex;
+        justify-content: space-between;
+    }
+
+  .property {
+    align-items: center;
+    color: #263238;
+    display: flex;
+    font-size: 14px;
+    gap: 15px;
+    height: 30px;
+    justify-content: center;
+    padding: 4px;
+    position: relative;
+    position: relative;
+    transition: all 0.3s ease-out;
+    width: 30px;
+  }
+  
+  .property::after {
+    transition: all 0.3s ease-out;
+    width: 0;
+    z-index: 1;
+  }
+  
+  .property .icon {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    color: #FFFFFF;
+  }
+  
+  .property .icon image {
+    height: 20px;
+    width: auto;
+  }
+  
+  .property .details {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+  }
+  
+  .property .details .name {
+    font-weight: bold;
+  }
+  
+  /*
+   * Property styles in highlighted state.
+   */
+  .property.highlight {
+    background-color: #FFFFFF;
+    border-radius: 8px;
+    box-shadow: 10px 10px 5px rgba(0, 0, 0, 0.2);
+    height: auto;
+    padding: 8px 15px;
+    width: auto;
+  }
+  
+  
+  .property.highlight .details {
+    display: flex;
+    max-width: 200px;
+  }
+  
