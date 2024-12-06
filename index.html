@@ -57,10 +57,12 @@
             let objtype;
             for (const celestialtarget of targets) {   
                 const coords = correctCoords(celestialtarget.ra, celestialtarget.dec, time)
+                const lng = getLongitudeWhereObjectOverhead(celestialtarget.ra, time);
+                console.log("old "+coords.lng+" new "+lng+" diff "+(coords.lng+lng))
                 celestialtarget.avmcode.startsWith('5.') ? objtype = "galaxy" : objtype = "nebula";
                 if (celestialtarget.avmcode.startsWith('3.6') == true) objtype = "cluster";
                 target = {
-                    position: { lng: coords.lng, lat: coords.lat },
+                    position: { lng: lng, lat: celestialtarget.dec },
                     type: objtype,
                     name: celestialtarget.name,
                     desc: celestialtarget.desc,
@@ -146,6 +148,43 @@
                     marker.setMap(null);
                 }
             }
+        }
+
+        function getLongitudeWhereObjectOverhead(raDegrees, datetime) {
+            const j2000 = 2451545.0; // Julian date for the J2000 epoch
+            const millisecondsInADay = 86400000; // Milliseconds in a day
+            const siderealDayHours = 23.9344696; // Mean sidereal day in hours
+            const julianUnixEpoch = 2440587.5; // Julian date for Unix epoch (1970-01-01T00:00:00Z)
+
+            // Current time in milliseconds since Unix epoch
+            const now = datetime; //Date.now();
+
+            // Convert current datetime to Julian date
+            const jnow = (now / millisecondsInADay) + julianUnixEpoch;
+
+            // Time elapsed since J2000 in Julian days
+            const deltaJ = jnow - j2000;
+
+            // Calculate Greenwich Mean Sidereal Time (GMST) in hours
+            const gmst = (18.697374558 + 24.06570982441908 * deltaJ) % 24;
+
+            // Ensure GMST is non-negative
+            const gmstNormalized = gmst < 0 ? gmst + 24 : gmst;
+
+            // Convert GMST from hours to degrees (1 hour = 15 degrees)
+            const gmstDegrees = gmstNormalized * 15;
+
+            // Calculate the Hour Angle (HA) in degrees
+            let hourAngle = gmstDegrees - raDegrees;
+
+            // Normalize HA to the range [-180, 180]
+            if (hourAngle > 180) {
+                hourAngle -= 360;
+            } else if (hourAngle < -180) {
+                hourAngle += 360;
+            } 
+            
+            return -hourAngle ; // Return GMST in degrees
         }
 
         function correctCoords(ra, dec, datetime) {
