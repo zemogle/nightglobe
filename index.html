@@ -56,9 +56,7 @@
             let target;
             let objtype;
             for (const celestialtarget of targets) {   
-                const coords = correctCoords(celestialtarget.ra, celestialtarget.dec, time)
                 const lng = getLongitudeWhereObjectOverhead(celestialtarget.ra, time);
-                console.log("old "+coords.lng+" new "+lng+" diff "+(coords.lng+lng))
                 celestialtarget.avmcode.startsWith('5.') ? objtype = "galaxy" : objtype = "nebula";
                 if (celestialtarget.avmcode.startsWith('3.6') == true) objtype = "cluster";
                 target = {
@@ -187,17 +185,6 @@
             return -hourAngle ; // Return GMST in degrees
         }
 
-        function correctCoords(ra, dec, datetime) {
-            const j2000 = 2451545.0;
-            const jnow = (datetime / 86400000) + 2440587.5;
-            const ts = ((jnow - j2000) * 24.) % 23.9344696; // hours
-            let hours = (ra - ts*15) % 360;
-            if (hours < 0) {
-                hours += 360;
-            } 
-            const lng = hours - 180;
-            return { lat: dec, lng: lng };
-        }
 
         function filterGalaxy(item){
             return item.avmcode.startsWith('5.1') ? true : false;
