@@ -1,0 +1,249 @@
+:root {
+  --building-color: #FF9800;
+  --house-color: #0288D1;
+  --shop-color: #7B1FA2;
+  --warehouse-color: #558B2F;
+}
+
+/*
+ * Optional: Makes the sample page fill the window.
+ */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Optional: Makes the map fill the window. */
+/*
+ * Always set the map height explicitly to define the size of the div element
+ * that contains the map.
+ *
+#map {
+  height: 100%;
+  width: 100%;
+} */
+
+/*
+ * Property styles in unhighlighted state.
+ */
+
+ #map { 
+  height:700px; 
+  width: 1400px; 
+  position:relative; 
+  }
+
+  input {
+      width: 100%;
+  }
+  datalist {
+      display: flex;
+      justify-content: space-between;
+  }
+
+.property {
+  align-items: center;
+  color: #263238;
+  display: flex;
+  font-size: 14px;
+  gap: 15px;
+  height: 30px;
+  justify-content: center;
+  padding: 4px;
+  position: relative;
+  position: relative;
+  transition: all 0.3s ease-out;
+  width: 30px;
+}
+
+.property::after {
+  transition: all 0.3s ease-out;
+  width: 0;
+  z-index: 1;
+}
+
+.property .icon {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  color: #FFFFFF;
+}
+
+.property .icon image {
+  height: 20px;
+  width: auto;
+}
+
+.property .details {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+}
+
+.property .details .name {
+  font-weight: bold;
+}
+
+/*
+ * Property styles in highlighted state.
+ */
+.property.highlight {
+  background-color: #FFFFFF;
+  border-radius: 8px;
+  box-shadow: 10px 10px 5px rgba(0, 0, 0, 0.2);
+  height: auto;
+  padding: 8px 15px;
+  width: auto;
+}
+
+
+.property.highlight .details {
+  display: flex;
+  max-width: 200px;
+}
+body {
+      font-family: 'Oswald', sans-serif;
+  background-color: #0d0c34;
+  background-image: url('../imgs/serol_bg_sm.jpg');
+  color:#fff;
+  font-size:60%;
+}
+
+.heading {
+  padding:5px;
+    font-weight: 300;
+    color: #fff;
+    text-align: left;
+    font-size:2em;
+}
+.update {
+  background-color: #ef5030;
+  border-radius: 25px;
+  font-size:70%;
+  padding-left: 10px;
+}
+
+.controls i {
+  font-size: 2em;
+}
+
+img.logo{
+ width: 100%;
+ max-width:300px;
+ max-heigh:100px;
+}
+
+.label img {
+  max-height: 25px;
+  max-width: 25px;
+  display:inline-block;
+}
+
+.serol {
+  width:100%;
+  height:100%;
+}
+
+.container {
+  background-color: #0d0c34;
+  padding:5px;
+  display:inline-block;
+  border-radius: 25px;
+}
+
+.site {
+  border: 5px solid #aaa;
+  background-color: #0d0c34;
+  padding:5px;
+  display:inline-block;
+  border-radius: 25px;
+  z-index: 30;
+}
+.telescope{
+  display:inline-block;
+  height:100px;
+}
+
+.tfn {border-color: #263c6f;}
+.ogg {border-color: #3366dd;}
+.tlv {border-color: #0038b8 ;}
+.coj {border-color:#fac900;}
+.cpt {border-color:#004f00;}
+.elp {border-color:#700000;}
+.lsc {border-color: #f04e23;}
+
+
+.fa-sun{
+  color:#FFCE33;
+}
+
+.fa-clouds-sun{
+  --fa-secondary-color:#FFCE33;
+}
+
+.fa-toggle-on {
+  --fa-primary-color:green;
+  --fa-primary-opacity:1.0;
+  --fa-secondary-color:white;
+  --fa-secondary-opacity:1.0;
+}
+
+.fa-toggle-off {
+  --fa-primary-color:white;
+  --fa-secondary-color:#FFCE33;
+}
+
+.title{
+    font-size:2em;
+    display:inline-block;
+    margin:0;
+    padding:5px 0;
+}
+
+
+#buffer {
+  display: none;
+}
+
+.status canvas{
+  max-width: 100px;
+  max-height: 100px;
+}
+
+@media (min-width: 768px) {
+  .status { max-width:50px; max-height: 50px;}
+
+  .status canvas{
+    max-width: 50px;
+    max-height: 50px;
+  }
+  body {
+    font-size: 70%;
+  }
+}
+
+@media (min-width: 1024px){
+.status { max-width:75px; max-height: 75px;}
+  .status canvas {
+    max-width: 75px;
+    max-height: 75px;
+    width:100%;
+  }
+  body {
+    font-size: 80%;
+  }
+}
+
+@media (min-width: 1200px){
+.status { max-width:100px; max-height: 100px;}
+  .status canvas {
+    max-width: 100px;
+    max-height: 100px;
+    width:100%;
+  }
+  body {
+    font-size: 100%;
+  }
+}
