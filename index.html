@@ -18,7 +18,18 @@
         let AdvancedMarkerElement;
         let infowindow
         let night;
-        let markers = [];
+        let markers = {'targets':[],'sites':[]};
+        let circles = [];
+
+        const lasCumbresSites = [
+            { name: "Haleakala Observatory", position: { lat: 20.7069, lng: -156.2567 }, color: "#FF0000" },
+            { name: "Siding Spring Observatory", position: { lat: -31.2733, lng: 149.0711 }, color: "#00FF00" },
+            { name: "Cerro Tololo", position: { lat: -30.1697, lng: -70.8065 }, color: "#0000FF" },
+            { name: "South African Astronomical Observatory", position: { lat: -32.3794, lng: 20.8107 }, color: "#FFA500" },
+            { name: "Teide Observatory", position: { lat: 28.3006, lng: -16.5097 }, color: "#800080" },
+            { name: "McDonald Observatory", position: { lat: 30.6715, lng: -104.0227 }, color: "#008080" }
+        ];
+
         const base_targets_url = "https://whatsup.lco.global/range/?callback=jsonp&aperture=0m4"
         let targets = [];
 
@@ -34,11 +45,26 @@
                 },
             };
 
+        function setAllSiteCircles(){
+            lasCumbresSites.forEach(site => {
+                const circle = new google.maps.Circle({
+                    strokeColor: site.color,
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: site.color,
+                    fillOpacity: 0.2, // Lightly filled with the same color
+                    map,
+                    center: site.position,
+                    radius: 60 * 111319.9, // 60 degrees converted to meters (approx)
+                });
+                circles.push(circle);
+            });
+        }
+            
         async function getTargets() {
             let enddate = new Date(globaltime);
             enddate.setDate(globaltime.getDate() + 14);
-            // const url = base_targets_url + "&start=" + globaltime.toISOString().substring(0, 19) + "&end=" + enddate.toISOString().substring(0, 19);
-            const url = "targets_combined.json"
+            const url = "targets.json"
             const response = await fetch(url);
             data = await response.json();
             return data
@@ -49,7 +75,7 @@
             mapdate.setDate(globaltime.getDate() + parseInt(deltad.value));
             mapdate.setHours(globaltime.getHours() + parseInt(deltat.value))
             nite.setDate(mapdate);
-            document.getElementById("currentdate").innerHTML = mapdate.toLocaleString()
+            setTimesDisplay(mapdate)
         }
 
         function setMarkers(time) {
@@ -57,7 +83,6 @@
             let objtype;
             for (const celestialtarget of targets) {   
                 const lng = getLongitudeWhereObjectOverhead(celestialtarget.ra, time);
-                console.log(celestialtarget.name, lng)
                 celestialtarget.avmcode.startsWith('5.') ? objtype = "galaxy" : objtype = "nebula";
                 if (celestialtarget.avmcode.startsWith('3.6') == true) objtype = "cluster";
                 target = {
@@ -79,12 +104,36 @@
                 gmpClickable: true,
                 title: `${target.name}`,
             });
-            markers.push(marker);
+            markers.targets.push(marker);
 
-        marker.addListener("click", () => {
-        toggleHighlight(marker, target);
-      })
-    }
+            marker.addListener("click", () => {
+                toggleHighlight(marker, target);
+            })
+        }
+
+        function setLasCumbresSites() {
+            for (const site of lasCumbresSites) {
+                // Create marker content as a DOM element
+                const markerContent = document.createElement("div");
+                markerContent.style.fontSize = "24px";
+                markerContent.style.color = site.color;
+                markerContent.innerHTML = `<span style="font-size: 36px;">\u{1F52D}</span>`; // Telescope icon
+
+                // Add marker for the site
+                const marker = new AdvancedMarkerElement({
+                    map,
+                    position: site.position,
+                    title: site.name,
+                    content: markerContent,
+                    gmpClickable: true,
+                });
+                markers.sites.push(marker);
+
+                marker.addListener("click", () => {
+                    toggleHighlight(marker, site);
+            })
+            }
+        }
 
     function toggleHighlight(markerView, property) {
         if (markerView.content.classList.contains("highlight")) {
@@ -113,36 +162,36 @@
   }
 
         // Sets the map on all markers in the array.
-        function setMapOnAll(map) {
-        for (let i = 0; i < markers.length; i++) {
-            markers[i].setMap(map);
-        }
+        function setMapOnAll(omarkers, map) {
+            for (let i = 0; i < omarkers.length; i++) {
+                omarkers[i].setMap(map);
+            }
         }
 
         // Removes the markers from the map, but keeps them in the array.
-        function hideMarkers() {
-        setMapOnAll(null);
+        function hideMarkers(omarkers) {
+            setMapOnAll(omarkers, null);
         }
 
         // Shows any markers currently in the array.
-        function showMarkers() {
-        setMapOnAll(map);
+        function showMarkers(omarkers) {
+            setMapOnAll(omarkers, map);
         }
 
         // Deletes all markers in the array by removing references to them.
-        function deleteMarkers() {
-        hideMarkers();
-        markers = [];
+        function deleteTargetMarkers() {
+            hideMarkers(markers.targets);
+            markers.targets = [];
         }
 
         function showNightMarkersOnly(time){
             let dt;
-            time ? dt = time : dt = globaltime;
-            deleteMarkers();
+            time ? dt = time : dt = mapdate;
+            deleteTargetMarkers();
             setMarkers(dt);
             const night = nite.marker_night.center
             const radius = nite.marker_night.radius
-            for (const marker of markers) {
+            for (const marker of markers.targets) {
                 if (google.maps.geometry.spherical.computeDistanceBetween(marker.position, night) < radius) {
                     marker.setMap(map);
                 } else {
@@ -205,10 +254,38 @@
             return item.avmcode.startsWith('3.6.4.1') ? true : false;
         }
 
-        window.onload = function() {
+        function setTimesDisplay(dateobj){
+            const formatter = new Intl.DateTimeFormat('en-GB', {year:"numeric", month:"long", day: "numeric", hour:"numeric", minute:"numeric", timeZoneName:"shortGeneric"});
+            document.getElementById("currentdatelocal").innerHTML = formatter.format(dateobj)
+            document.getElementById("currentdateutc").innerHTML = dateobj.toUTCString()
+        }
 
+        window.onload = function() {
+        
           initMap();
-          document.getElementById("currentdate").innerHTML = globaltime.toLocaleString()
+
+          $('#showall').click(function() {
+                showMarkers(markers.targets);
+                showMarkers(markers.sites);
+                $(this).hide();
+                $('#showvisible').show();
+            });
+        $('#showvisible').click(function() {
+            showNightMarkersOnly();
+            $(this).hide();
+            $('#showall').show();
+        });
+
+
+        $('#toggleitecircles').click(function() {
+            if (circles[0].map == map) {
+                setMapOnAll(circles, null)
+            } else {
+                setMapOnAll(circles, map)
+            }
+        })
+
+          setTimesDisplay(globaltime)
           var deltat = document.getElementById("time");
           var deltad = document.getElementById("date");
 
@@ -240,20 +317,23 @@
             });
 
             night = nite.init(map);
+
+            setLasCumbresSites();
+
             getTargets().then(data => {
-                targets = data['targets'];
+                targets = data;
                  // loop over array targets running addMarker function for each target
                 //  showNightMarkersOnly(globaltime)
                  setMarkers(globaltime);
-                 setMapOnAll(null);
+                 setMapOnAll(markers.targets, null);
             });
+            setAllSiteCircles(map)
+            setMapOnAll(circles, null)
         }
 	</script>
 
 <script>(g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})
         ({key: "AIzaSyBohqTcje1yyskhfbUayd5hku_WJUc-YFM", v: "weekly"});</script>
-
-
 
 </head>
 <body>
@@ -261,23 +341,41 @@
     <section class="section">
         <div class="container">
             <h1>Night Globe</h1>
-            <div id="map"></div>
-                <p>Map Date:
-                    <span id="currentdate"></span>
-                </p>
+                <div id="map"></div>
         </div>
-        <div class="container">
+        <div class="container dates-container px-6">
             <div class="columns">
+                <div class="column is-3">
+                    <h2>Current date/time on the map</h2>
+                </div>
                 <div class="column">
-                    <button id="showall" onclick="showNightMarkersOnly()" class="button is-primary">Show objects</button>
+                    <span id="currentdatelocal"></span>
+                    <h2>in your local timezone</h2>
+                </div>
+                <div class="column">
+                    <span id="currentdateutc"></span>
+                    <h2>in Universal Time</h2>
+                </div>
+            </div>
+        </div>
+        <div class="container highlight-box">
+            <div class="columns">
+                <div class="column is-2">
+                    <button id="showall" onclick="showNightMarkersOnly()" class="button is-primary">Show all objects</button>
+                    <button id="showvisible" onclick="showNightMarkersOnly()" class="button is-primary">Show visible objects</button>
+                    <button id="toggleitecircles" class="button is-primary">Toggle site circles</button>
+                </div>
+                <div class="column">
+                    <span>Change the time</span>
                     <input type="range" id="time" min="0" max="24" value="0" list="tickmarks"/>
                     <datalist id="tickmarks">
                         <option value="0" label="0"></option>
-                        <option value="12" label="12"></option>
-                        <option value="24" label="24"></option>
+                        <option value="12" label="12 hours"></option>
+                        <option value="24" label="24 hours"></option>
                     </datalist>
                 </div>
             <div class="column">
+                <span>Change the date</span>
                 <input type="range" id="date" min="0" max="360" list="date-ticks" value="0"/>
                 <datalist id="date-ticks">
                     <option value="0" label="0"></option>

@@ -1,10 +1,7 @@
-:root {
-    --building-color: #FF9800;
-    --house-color: #0288D1;
-    --shop-color: #7B1FA2;
-    --warehouse-color: #558B2F;
-  }
-  
+@import url('https://fonts.googleapis.com/css2?family=Quattrocento+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Unica+One&display=swap');
+
+$font-stack: "Quattrocento Sans", sans-serif;
+$font-headers: 
   /*
    * Optional: Makes the sample page fill the window.
    */
@@ -13,6 +10,7 @@
     height: 100%;
     margin: 0;
     padding: 0;
+    font-family: "Quattrocento Sans", sans-serif; 
   }
   
   /* Optional: Makes the map fill the window. */
@@ -29,10 +27,34 @@
    * Property styles in unhighlighted state.
    */
 
+   h1, h2, h3 {
+    font-family: 'Unica One', sans-serif;
+    text-transform: uppercase;
+   }
+
+   h1 {
+    font-size:3rem;
+   }
+
    #map { 
     height:600px; 
-    width: 1200px; 
+    width: 100%; 
     position:relative; 
+    }
+
+    .dates-container {
+      top:-50px;
+      background-color: #FFFFFF;
+      color: #263238;
+    }
+
+    .highlight-box {
+      background-color: #192026;
+      border-radius: 8px;
+      box-shadow: 10px 10px 5px rgba(0, 0, 0, 0.2);
+      height: auto;
+      padding: 8px 15px;
+      width: auto;
     }
 
     input {
